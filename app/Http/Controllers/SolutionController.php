@@ -20,8 +20,11 @@ class SolutionController extends Controller
         $solutions = QueryBuilder::for(Solution::versioned())
             ->allowedFilters([
                 AllowedFilter::exact('exercise_id'),
-                AllowedFilter::partial('user.name'),
+                AllowedFilter::exact('user_id'),
+                AllowedFilter::partial('name', 'users.name', false),
             ])
+            ->select('*', 'solutions.id as id')
+            ->join('users', 'solutions.user_id', 'users.id')
             ->with(['user', 'exercise'])
             ->whereHas('user')
             ->latest('solutions.created_at')
